@@ -7,10 +7,18 @@ if (!process.env.SLACK_API_TOKEN || !process.env.GITHUB_API_TOKEN) {
 var Botkit = require('botkit');
 var Request = require('request');
 var Datetime = require('node-datetime');
+var Urljoin = require('url-join');
 var Fs = require('fs');
 
+// check mark will be added after issue is created
 var CHECK_MARK = 'heavy_check_mark';
+// emoji chcha listens for issue creation
 var EMOJI_WANTED = 'heart';
+// github account that will do the issue posting
+var GithubOwner = 'fkymy';
+// github repo to post
+var GithubRepo = 'chacha-issue-test';
+
 //
 // startup chacha
 //
@@ -52,7 +60,7 @@ controller.on('reaction_added', function(bot, message) {
         if (reactions[i].name !== EMOJI_WANTED) { continue; }
 
         var options = {
-          uri: 'https://api.github.com/repos/fkymy/chacha-issue-test/issues',
+          uri: Urljoin('https://api.github.com/repos/', GithubOwner, GithubRepo, 'issues'),
           headers: {
             'Content-Type': 'applcation/json',
             'Authorization': 'token ' + process.env.GITHUB_API_TOKEN,
@@ -105,7 +113,7 @@ function notifyIssue(message, response) {
   var channelData = {
     channel: message.item.channel
   }, messageData = {
-    text: 'Issueを作成しました: <'+ JSON.parse(response.body).html_url + '>'
+    text: 'Chacha!: <'+ JSON.parse(response.body).html_url + '>'
   };
 
   bot.reply(channelData, messageData, function(error) {
