@@ -60,7 +60,7 @@ controller.on('reaction_added', function(bot, message) {
           },
           body: JSON.stringify({
             title: '[slack] ' + Datetime.create().format('Y-m-d H:M'),
-            body: "[created by a bot]\n" + response.message.permalink + readIssueTemplate()
+            body: "[created by a bot]\n" + response.message.permalink + "\n" + Fs.readFileSync('.github/ISSUE_TEMPLATE.md', 'utf8')
           })
         };
 
@@ -69,15 +69,6 @@ controller.on('reaction_added', function(bot, message) {
     }
   });
 });
-
-function readIssueTemplate() {
-  var issueTemplate;
-  Fs.readFile('.github/ISSUE_TEMPLATE.md', 'utf8', function (error, text) {
-    issueTemplate = text;
-  });
-
-  return issueTemplate;
-}
 
 function postGithubIssue(message, options) {
   Request.post(options, function(error, response) {
